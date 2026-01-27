@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DataRecord, BatchProgress } from '../models/user.model';
-
+//sistema de procesamientos por lotes/hilos
 @Injectable({
   providedIn: 'root'
 })

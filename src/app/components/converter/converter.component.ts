@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+  //componente principal proyecto
+  //carga json, eventos darg,drop, llam servicios
 import { FileParserService } from '../../services/file-parser.service';
 import { BatchProcessorService } from '../../services/batch-processor.service';
 import { XlsxExportService } from '../../services/xlsx-export.service';
