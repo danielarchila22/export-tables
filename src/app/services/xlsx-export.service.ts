@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { DataRecord } from '../models/user.model';
-
+//redibe los datos, genera excel, dispara descarga
 @Injectable({
   providedIn: 'root'
 })

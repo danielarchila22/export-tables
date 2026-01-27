@@ -9,3 +9,4 @@ import { ConverterComponent } from './components/converter/converter.component';
   styles: []
 })
 export class AppComponent {}
+//tenemos raiz app, layout base
