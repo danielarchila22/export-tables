@@ -1,12 +1,11 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { ConverterComponent } from './components/converter/converter.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [ConverterComponent],
+  template: `<app-converter />`,
+  styles: []
 })
-export class App {
-  protected readonly title = signal('export_tables');
-}
+export class AppComponent {}
