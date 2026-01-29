@@ -49,6 +49,15 @@ type ProcessingState = 'idle' | 'parsing' | 'processing' | 'complete' | 'error';
       Convertir y descargar
     </button>
 
+    <button
+  class="btn-primary"
+  [disabled]="tableData().length === 0"
+  (click)="copiarTabla()"
+>
+  Copiar tabla
+</button>
+
+
     <div class="mt-4 flex gap-4">
 
   <button
@@ -66,8 +75,9 @@ type ProcessingState = 'idle' | 'parsing' | 'processing' | 'complete' | 'error';
   >
     Exportar CSV (.csv)
   </button>
-
 </div>
+
+
     <!-- Selección de formato de exportación -->
 <div class="mt-4 flex gap-6 items-center">
   <span class="font-semibold">Formato de exportación:</span>
@@ -228,7 +238,28 @@ exportarCsv(): void {
   this.csvExport.export(data, 'export.csv');
 }
 
-  generarLote(inicio: number, tamaño: number): DataRecord[] {
+copiarTabla(): void {
+  const data = this.tableData();
+  if (!data.length) return;
+
+  const encabezados = ['ID', 'Nombre', 'Correo'];
+
+  const filas = data.map(d => [
+    `'${d.id}`,          // fuerza texto
+    `"${d.nombre}"`,     // fuerza texto
+    `"${d.correo}"`      // fuerza texto
+  ]);
+
+  const contenido = [
+    encabezados.join('\t'),
+    ...filas.map(f => f.join('\t'))
+  ].join('\n');
+
+  navigator.clipboard.writeText(contenido);
+}
+
+
+generarLote(inicio: number, tamaño: number): DataRecord[] {
   const datos: DataRecord[] = [];
 
   for (let i = inicio; i < inicio + tamaño; i++) {
