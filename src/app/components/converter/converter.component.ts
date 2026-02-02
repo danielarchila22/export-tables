@@ -41,74 +41,88 @@ type ProcessingState = 'idle' | 'parsing' | 'processing' | 'complete' | 'error';
       ></div>
     </div>
 
+    <div class="mt-6 flex flex-col gap-8">
+
+<div>
+  <h3 class="mb-3 text-lg font-semibold">
+    Formatos de exportacion:
+  </h3>
+
+  <div class="flex gap-4">
     <button
       class="btn-primary"
-      [disabled]="!selectedFile()"
-      (click)="startConversion()"
+      [disabled]="tableData().length === 0"
+      (click)="exportarXlsx()"
     >
-      Convertir y descargar
+      Exportar Excel (.xlsx)
     </button>
 
     <button
-  class="btn-primary"
-  [disabled]="tableData().length === 0"
-  (click)="copiarTabla()"
->
-  Copiar tabla
-</button>
+      class="btn-primary"
+      [disabled]="tableData().length === 0"
+      (click)="exportarCsv()"
+    >
+      Exportar CSV (.csv)
+    </button>
+    </div>
+  </div>
 
 
-    <div class="mt-4 flex gap-4">
+    <!-- genrara datos -->
+  <div>
+    <h3 class="mb-3 text-lg font-semibold">
+      Generacion de datos:
+    </h3>
 
-  <button
+      <!-- Botones para generar datos -->
+  <div class="flex gap-4 flex-wrap items-center">
+    <button
+      class="btn-primary"
+      (click)="generarDatosMasivos(1000)">
+      1.000 registros
+    </button>
+
+    <button
+      class="btn-primary"
+      (click)="generarDatosMasivos(10000)"
+    >
+      10.000 registros
+    </button>
+
+    <button
+      class="btn-primary"
+      (click)="generarDatosMasivos(100000)">
+      100.000 registros
+    </button>
+
+    <button
+    class="btn-primary"
+    [disabled]="tableData().length === 0 || tableData().length > 10001"
+    (click)="imprimirTabla()">
+    Imprimir
+    </button>
+
+    <button
     class="btn-primary"
     [disabled]="tableData().length === 0"
-    (click)="exportarXlsx()"
-  >
-    Exportar Excel (.xlsx)
-  </button>
+    (click)="copiarTabla()"
+    >Copiar
+    </button>
+  </div>
 
-  <button
-    class="btn-primary"
-    [disabled]="tableData().length === 0"
-    (click)="exportarCsv()"
-  >
-    Exportar CSV (.csv)
-  </button>
-</div>
-
-
-    <!-- Selección de formato de exportación -->
-<div class="mt-4 flex gap-6 items-center">
-  <span class="font-semibold">Formato de exportación:</span>
-</div>
-
-    <!-- Botones para generar datos -->
-<div class="mt-4 flex gap-3">
-  <button
-    class="btn-primary"
-    (click)="generarDatosMasivos(1000)"
-  >
-    Generar 1000 registros
-  </button>
-
-  <button
-    class="btn-primary"
-    (click)="generarDatosMasivos(10000)"
-  >
-    Generar 10.000 registros
-  </button>
-
-  <button
-    class="btn-primary"
-    (click)="generarDatosMasivos(100000)"
-  >
-    Generar 100.000 registros
-  </button>
+  <p
+    *ngIf="tableData().length > 10000"
+    class="text-yellow-400 text-sm mt-2">
+    La impresión está limitada a 10.000 registros.<br/>
+    Para más de 10.000 registros use exportación Excel o CSV.
+  </p>
 </div>
 
   <!-- Tabla de datos -->
-<div *ngIf="tableData().length > 0" class="mt-6 overflow-auto max-h-[400px] border rounded">
+  <div
+  *ngIf="tableData().length > 0"
+  class="tabla-imprimible mt-6 overflow-auto max-h-[400px] border rounded">
+
 
   <table class="w-full border-collapse text-sm">
     <thead class="bg-gray-800 text-white sticky top-0">
@@ -195,24 +209,6 @@ export class ConverterComponent {
   }
 }
 
-async startConversion(): Promise<void> {
-  const records = this.tableData();
-  if (!records.length) return;
-
-  this.state.set('processing');
-
-  await this.batchProcessor.processBatches(
-    records,
-    this.batchSize,
-    async (batch) => {
-      this.xlsxExport.appendBatch(batch);
-    }
-  );
-
-  this.xlsxExport.finalizeAndDownload('export.xlsx');
-  this.state.set('complete');
-}
-
 exportarXlsx(): void {
   const data = this.tableData();
   if (!data.length) return;
@@ -238,6 +234,10 @@ exportarCsv(): void {
   this.csvExport.export(data, 'export.csv');
 }
 
+imprimirTabla(): void {
+  window.print();
+}
+
 copiarTabla(): void {
   const data = this.tableData();
   if (!data.length) return;
@@ -245,9 +245,9 @@ copiarTabla(): void {
   const encabezados = ['ID', 'Nombre', 'Correo'];
 
   const filas = data.map(d => [
-    `'${d.id}`,          // fuerza texto
-    `"${d.nombre}"`,     // fuerza texto
-    `"${d.correo}"`      // fuerza texto
+    `'${d.id}`,
+    `"${d.nombre}"`,     //obligamos a que compile el texto bien
+    `"${d.correo}"`
   ]);
 
   const contenido = [
@@ -257,7 +257,6 @@ copiarTabla(): void {
 
   navigator.clipboard.writeText(contenido);
 }
-
 
 generarLote(inicio: number, tamaño: number): DataRecord[] {
   const datos: DataRecord[] = [];
@@ -270,7 +269,6 @@ generarLote(inicio: number, tamaño: number): DataRecord[] {
     });
   }
   return datos;
-
 }
 
   async generarDatosMasivos(total: number): Promise<void> {

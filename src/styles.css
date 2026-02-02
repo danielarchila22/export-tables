@@ -50,4 +50,45 @@
     @apply h-full bg-gradient-to-r from-accent-600 to-accent-400
            rounded-full transition-all duration-300;
   }
+
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .tabla-imprimible,
+  .tabla-imprimible * {
+    visibility: visible;
+  }
+
+  .tabla-imprimible {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .tabla-imprimible {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  table {
+    page-break-inside: auto;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+}
+
+
